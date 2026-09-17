@@ -1,84 +1,80 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#11131a" />
-<title>DMU P3 Black Hole — Mobile Sim</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#11131a">
+<title>DMU P3 Black Hole — Waju Logic Trainer</title>
+<link rel="stylesheet" href="../../style.css">
+<style>
+  .hud{grid-template-columns:repeat(6,1fr)}
+  .bhToolbar{row-gap:8px}
+  .bhBadge{font-size:16px;border-color:#9be8ff;color:#dffcff}
+  .selectWrap.disabledControl{opacity:.45}
+  .debuffStrip{position:absolute;left:50%;top:54px;transform:translateX(-50%);display:flex;gap:8px;z-index:7;pointer-events:none}
+  .debuffIcon{min-width:74px;height:50px;padding:5px 8px;border-radius:10px;background:rgba(12,15,25,.9);border:1px solid rgba(255,255,255,.16);box-shadow:0 4px 20px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900}
+  .debuffIcon .tiny{font-size:9px;color:#cbd2e8;letter-spacing:.08em}.debuffIcon .big{font-size:15px}.debuffIcon.acc{border-color:#cf9cff;background:linear-gradient(180deg,rgba(111,61,151,.94),rgba(34,23,54,.94))}
+  .debuffIcon.fade{opacity:0;transform:translateY(-5px);transition:opacity .45s,transform .45s}
+  .wipeFlash{position:absolute;inset:0;pointer-events:none;background:rgba(255,55,78,.0);transition:background .12s;z-index:6}.wipeFlash.on{background:rgba(255,55,78,.16)}
+  @media(max-width:800px){.hud{grid-template-columns:repeat(3,1fr)}.debuffStrip{top:49px}.debuffIcon{min-width:61px;height:43px}.debuffIcon .big{font-size:12px}}
+</style>
 </head>
 <body>
 <div class="app">
   <div class="top">
     <div>
-      <div class="title">DMU P3 · Black Hole Mobile v7.1 · Stylized Game View</div>
-      <div class="sub">Simulação completa da Black Hole da P3: debuffs, bots, Giant Kefka, Chaos, Exdeath, Edicts, slaps e tethers no padrão visual 7.1.</div>
+      <div class="title">DMU P3 · Black Hole · Waju Logic Rebuild</div>
+      <div class="sub">Sequência refeita do zero usando layouts, prioridades, posições e timings da implementação pública do Waju como referência.</div>
     </div>
     <div class="toolbar bhToolbar">
       <button id="startBtn" class="primary" type="button">Começar</button>
       <div class="selectWrap">Modo
-        <select id="modeSelect" aria-label="Modo de distribuição">
-          <option value="random" selected>Random</option>
-          <option value="manual">Manual</option>
-        </select>
+        <select id="modeSelect"><option value="random" selected>Random</option><option value="manual">Manual</option></select>
       </div>
       <div class="selectWrap">Slot
-        <select id="roleSelect" aria-label="Seu slot">
-          <option value="MT">MT</option>
-          <option value="ST">ST</option>
-          <option value="H1" selected>H1</option>
-          <option value="H2">H2</option>
-          <option value="M1">M1</option>
-          <option value="M2">M2</option>
-          <option value="R1">R1</option>
-          <option value="R2">R2</option>
-        </select>
+        <select id="roleSelect"><option value="t1">MT</option><option value="t2">ST</option><option value="h1" selected>H1</option><option value="h2">H2</option><option value="m1">M1</option><option value="m2">M2</option><option value="r1">R1</option><option value="r2">R2</option></select>
       </div>
       <div class="selectWrap" id="lineWrap">Linha
-        <select id="lineSelect" aria-label="Linha">
-          <option value="1">First</option>
-          <option value="2" selected>Second</option>
-          <option value="3">Third</option>
-        </select>
+        <select id="lineSelect"><option value="fil">First</option><option value="sil" selected>Second</option><option value="til">Third</option></select>
       </div>
       <div class="selectWrap" id="accWrap">Accretion
-        <select id="accSelect" aria-label="Accretion">
-          <option value="no" selected>Não</option>
-          <option value="yes">Sim</option>
-        </select>
+        <select id="accSelect"><option value="no" selected>Não</option><option value="yes">Sim</option></select>
       </div>
       <button id="hintBtn" type="button" aria-pressed="false">Hints OFF</button>
     </div>
   </div>
 
-  <div class="hud hud5">
+  <div class="hud">
     <div class="card"><div class="k">Você</div><div class="v" id="youHud">H1</div></div>
-    <div class="card"><div class="k">Debuffs</div><div class="v" id="debuffHud">RANDOM</div></div>
-    <div class="card"><div class="k">Sua ordem</div><div class="v" id="orderHud">?</div></div>
-    <div class="card"><div class="k">Set</div><div class="v" id="setHud">—</div></div>
-    <div class="card"><div class="k">Acertos</div><div class="v" id="scoreHud">0 / 3</div></div>
+    <div class="card"><div class="k">Linha</div><div class="v" id="lineHud">—</div></div>
+    <div class="card"><div class="k">Accretion</div><div class="v" id="accHud">?</div></div>
+    <div class="card"><div class="k">Black Hole</div><div class="v" id="blockHud">—</div></div>
+    <div class="card"><div class="k">Wave</div><div class="v" id="waveHud">—</div></div>
     <div class="card"><div class="k">Tempo</div><div class="v" id="timeHud">—</div></div>
   </div>
 
-  <div class="stage" id="stage" tabindex="0" aria-label="Arena do simulador">
+  <div class="stage" id="stage" tabindex="0">
     <canvas id="game" width="1280" height="720"></canvas>
-    <div class="banner" id="banner">Escolha seu slot e toque em Começar</div>
+    <div class="banner" id="banner">Escolha o slot e toque em Começar</div>
     <div class="lcBadge bhBadge" id="bhBadge">BH</div>
-    <div class="joy" id="joy" aria-label="Joystick virtual de movimento"><div class="joyLabel">MOVE</div></div>
-    <div class="camJoy" id="camJoy" aria-label="Joystick virtual de câmera"><div class="joyLabel">CAM</div></div>
+    <div class="debuffStrip" id="debuffStrip"></div>
+    <div class="wipeFlash" id="wipeFlash"></div>
+    <div class="joy" id="joy"><div class="joyLabel">MOVE</div></div>
+    <div class="camJoy" id="camJoy"><div class="joyLabel">CAM</div></div>
     <button class="sprint" id="sprintBtn" type="button">SPRINT</button>
   </div>
 
   <div class="help">
     <div class="legend">
       <span><span class="dot" style="background:#66d9a6"></span>você</span>
-      <span><span class="dot" style="background:#c086ff"></span>Giant Kefka</span>
-      <span><span class="dot" style="background:#9be8ff"></span>blackholes / tether spots</span>
-      <span><span class="dot" style="background:#ffe084"></span>seu tether</span>
+      <span><span class="dot" style="background:#a8b7ff"></span>bots</span>
+      <span><span class="dot" style="background:#9be8ff"></span>blackhole / tether</span>
+      <span><span class="dot" style="background:#c086ff"></span>Kefka</span>
+      <span><span class="dot" style="background:#ff765e"></span>AoE</span>
     </div>
-    <div class="msg" id="msg">No Random, escolha só seu slot e memorize os debuffs quando aparecerem. Os bots resolvem as outras responsabilidades; você executa seus tethers e as mecânicas intercaladas.</div>
+    <div class="msg" id="msg">Random distribui a party inteira como o Waju. Manual força apenas o seu resultado e mantém uma distribuição válida para os outros 7 jogadores.</div>
   </div>
-  <div class="credit">Simulação detalhada baseada na sequência do Waju/DMU P3: distribuição completa da party, 11 blackholes por layout, prioridade DPS → Support → Accretion, quatro blocos de blackholes, Edicts, slaps, White Hole e final body slam. Visual original estilizado, sem assets oficiais do jogo.</div>
+  <div class="credit">Visual original. A lógica de Black Hole usa como referência a implementação pública GPL-3.0 do Waju Sims: layouts Set13/Set24, DSA priority, BH_PRE_POS/BH_BAIT_POS e sequência P3 EQ.</div>
 </div>
 <script src="app.js"></script>
 </body>
