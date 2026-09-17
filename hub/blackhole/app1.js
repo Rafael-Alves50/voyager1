@@ -97,11 +97,25 @@
 
   function randomSetup(){
     const slot=roleSelect.value;
-    // Combinações pessoais válidas da distribuição real:
-    // Tanks nunca recebem Accretion; healer/DPS podem receber ACC em 1st/2nd, nunca 3rd.
-    const options = (slot==='MT'||slot==='ST')
-      ? [{line:1,acc:false},{line:2,acc:false},{line:3,acc:false}]
-      : [{line:1,acc:false},{line:2,acc:false},{line:3,acc:false},{line:1,acc:true},{line:2,acc:true}];
+    let options;
+    if(slot==='MT'||slot==='ST'){
+      options=[{line:1,acc:false},{line:2,acc:false},{line:3,acc:false}];
+    } else if(isHealer(slot)){
+      options=[
+        {line:1,acc:false},{line:1,acc:false},
+        {line:2,acc:false},{line:2,acc:false},
+        {line:3,acc:false},{line:3,acc:false},
+        {line:1,acc:true},{line:1,acc:true},{line:1,acc:true},
+        {line:2,acc:true},{line:2,acc:true},{line:2,acc:true}
+      ];
+    } else {
+      options=[
+        {line:1,acc:false},{line:1,acc:false},
+        {line:2,acc:false},{line:2,acc:false},
+        {line:3,acc:false},{line:3,acc:false},
+        {line:1,acc:true},{line:2,acc:true}
+      ];
+    }
     const pick=options[Math.floor(Math.random()*options.length)];
     return decorateSetup(slot,pick.line,pick.acc);
   }
