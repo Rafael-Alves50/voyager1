@@ -1,0 +1,22 @@
+/* Mobile game UX: prevent accidental text selection / long-press callouts while using virtual controls. */
+html, body, body * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+html, body {
+  overscroll-behavior: none;
+}
+
+button, select, .selectWrap, .stage, canvas, .joy, .camJoy, .sprint {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, select, .selectWrap {
+  touch-action: manipulation;
+}
+
+.stage, canvas, .joy, .camJoy, .sprint {
+  touch-action: none;
+}
