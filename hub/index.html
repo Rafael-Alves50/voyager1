@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#11131a" />
+<title>DMU Mobile Sim Hub</title>
+<style>
+:root{color-scheme:dark;--bg:#0d0f15;--panel:#151925;--panel2:#1b2030;--text:#f5f7ff;--muted:#aeb6ca;--accent:#8e83ff;--line:#343b51;--good:#62d99f;--warm:#ffd166}
+*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at top,#1b2133 0,#0d0f15 45%,#090b10 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+body{padding:18px 14px 28px}
+.wrap{width:min(1220px,100%);margin:0 auto}
+.hero{background:linear-gradient(180deg,rgba(32,38,57,.96),rgba(18,21,31,.96));border:1px solid var(--line);border-radius:24px;padding:22px 22px 18px;box-shadow:0 24px 90px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.03)}
+.kicker{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(142,131,255,.14);color:#ddd8ff;border:1px solid rgba(142,131,255,.25);font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+h1{margin:14px 0 8px;font-size:clamp(28px,5vw,46px);line-height:1.04}.sub{color:var(--muted);font-size:14px;max-width:850px;line-height:1.5}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.badge{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:12px;color:#d5dbef}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}
+.card{display:flex;flex-direction:column;min-height:340px;background:linear-gradient(180deg,rgba(25,30,45,.98),rgba(18,21,31,.98));border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 18px 60px rgba(0,0,0,.28);overflow:hidden;position:relative}
+.card::after{content:"";position:absolute;inset:auto -15% -35% auto;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(142,131,255,.22),rgba(142,131,255,0));pointer-events:none}
+.card h2{margin:0 0 6px;font-size:28px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#cfc8ff}.desc{color:var(--muted);line-height:1.45;font-size:14px;max-width:52ch}
+.pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.pill{font-size:12px;padding:7px 10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);border-radius:999px}
+.preview{margin:18px 0 10px;border-radius:18px;border:1px solid rgba(255,255,255,.08);overflow:hidden;min-height:170px;background:#0a0d14;display:grid;place-items:center;position:relative}
+.preview.limit{background:radial-gradient(circle at 50% 68%,#283152 0,#111725 38%,#0a0d14 70%)}
+.preview.limit .ring,.preview.bh .ring{position:absolute;border-radius:50%;inset:auto;opacity:.95}
+.preview.limit .ring.r1{width:230px;height:82px;border:2px solid #7fa9ff;bottom:36px}
+.preview.limit .ring.r2{width:170px;height:58px;border:1px solid rgba(126,165,255,.5);bottom:48px}
+.preview.limit .boss{position:absolute;top:26px;left:50%;transform:translateX(-50%);width:96px;height:130px;border-radius:48% 48% 42% 42%;background:linear-gradient(180deg,#f4cf97,#ad2d5a 54%,#5c2c85);box-shadow:0 0 35px rgba(201,123,255,.35)}
+.preview.limit .player{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);width:48px;height:70px;border-radius:40% 40% 35% 35%;background:linear-gradient(180deg,#ece7df,#5c4f7d 48%,#eee8e1)}
+.preview.limit .way{position:absolute;width:34px;height:52px;border:2px solid #80a6ff;border-radius:14px;bottom:48px;right:48px;color:#cfe1ff;font-weight:900;display:grid;place-items:center;background:rgba(30,50,88,.5)}
+.preview.bh{background:radial-gradient(circle at 50% 68%,#23314d 0,#101726 38%,#080b12 72%)}
+.preview.bh .ring.r1{width:250px;height:88px;border:2px solid #82aec2;bottom:34px}.preview.bh .ring.r2{width:186px;height:64px;border:1px solid rgba(130,174,194,.4);bottom:46px}
+.preview.bh .boss{position:absolute;top:28px;left:50%;transform:translateX(-50%);width:120px;height:148px;border-radius:48% 48% 40% 40%;background:linear-gradient(180deg,#f3d5a4,#c94b82 48%,#6835a0);box-shadow:0 0 42px rgba(224,123,255,.35)}
+.preview.bh .holes{position:absolute;bottom:74px;left:50%;transform:translateX(-50%);display:flex;gap:16px}.preview.bh .hole{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,#0d1118 22%,#090b10 46%,#4f4a78 62%,#9be8ff 66%,#080b11 80%);box-shadow:0 0 20px rgba(125,218,255,.2)}
+.preview.bh .beam{position:absolute;bottom:88px;left:50%;width:3px;height:70px;background:linear-gradient(180deg,rgba(176,255,243,.9),rgba(176,255,243,.05));transform:translateX(-50%) rotate(24deg);box-shadow:0 0 12px rgba(176,255,243,.5)}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:8px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 16px;border-radius:14px;text-decoration:none;font-weight:800;border:1px solid var(--line);background:var(--panel2);color:var(--text)}.btn.primary{background:var(--accent);border-color:transparent}.small{font-size:12px;color:var(--muted);margin-top:8px}
+.footer{margin-top:16px;color:#7f87a0;font-size:12px;line-height:1.45}
+@media(max-width:860px){.grid{grid-template-columns:1fr}.card{min-height:unset}} 
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="kicker">DMU Mobile Sim Hub · Official 7.1 Standard</div>
+    <h1>Treine a P3 do DMU no celular.</h1>
+    <div class="sub">Escolha a mecânica que quer praticar. O visual segue o padrão v7.1 estilizado: câmera baixa, arena mais rica, bonecos maiores, controles mobile e sensação mais próxima de um mini simulador/joguinho.</div>
+    <div class="badges">
+      <div class="badge">✅ Limit Cut v7.1</div>
+      <div class="badge">🕳️ Black Hole Trainer</div>
+      <div class="badge">🎮 MOVE + CAM + Sprint</div>
+      <div class="badge">📱 Feito para landscape</div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <div class="eyebrow">Mechanic 01</div>
+      <h2>Limit Cut</h2>
+      <div class="desc">A versão 7.1 oficial do simulador de Limit Cut: leitura dos dashes, câmera girável, joystick duplo e resolução do spot com o mesmo padrão visual estilizado que vocês curtiram.</div>
+      <div class="pillrow">
+        <div class="pill">8 dashes</div>
+        <div class="pill">Leitura de CW/CCW</div>
+        <div class="pill">Resolve por número</div>
+      </div>
+      <div class="preview limit">
+        <div class="boss"></div>
+        <div class="ring r1"></div><div class="ring r2"></div>
+        <div class="player"></div>
+        <div class="way">A</div>
+      </div>
+      <div class="cta">
+        <a class="btn primary" href="../">Abrir simulador</a>
+      </div>
+      <div class="small">Mantém o padrão v7.1 como versão oficial a partir de agora.</div>
+    </article>
+
+    <article class="card">
+      <div class="eyebrow">Mechanic 02</div>
+      <h2>Black Hole</h2>
+      <div class="desc">Treinador da Black Hole da P3 com seleção de slot/role, First/Second/Third In Line e estado de Accretion. O simulador mostra o seu papel dentro dos 10 sets e deixa praticar os tethers com o novo norte do Giant Kefka.</div>
+      <div class="pillrow">
+        <div class="pill">Role / slot select</div>
+        <div class="pill">Accretion ON/OFF</div>
+        <div class="pill">10 tether sets</div>
+      </div>
+      <div class="preview bh">
+        <div class="boss"></div>
+        <div class="ring r1"></div><div class="ring r2"></div>
+        <div class="holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="beam"></div>
+      </div>
+      <div class="cta">
+        <a class="btn primary" href="./blackhole/">Abrir simulador</a>
+      </div>
+      <div class="small">Focado em prioridade, novos nortes e execução dos tethers.</div>
+    </article>
+  </section>
+
+  <div class="footer">Este hub é separado dos links antigos que você já passou para a static. Ou seja: ele não quebra os links anteriores e vira a base nova para os próximos simuladores.</div>
+</div>
+</body>
+</html>
