@@ -1,81 +1,65 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#11131a">
-<title>DMU P3 Black Hole — Waju Logic Trainer</title>
-<link rel="stylesheet" href="../../style.css">
-<style>
-  .hud{grid-template-columns:repeat(6,1fr)}
-  .bhToolbar{row-gap:8px}
-  .bhBadge{font-size:16px;border-color:#9be8ff;color:#dffcff}
-  .selectWrap.disabledControl{opacity:.45}
-  .debuffStrip{position:absolute;left:50%;top:54px;transform:translateX(-50%);display:flex;gap:8px;z-index:7;pointer-events:none}
-  .debuffIcon{min-width:74px;height:50px;padding:5px 8px;border-radius:10px;background:rgba(12,15,25,.9);border:1px solid rgba(255,255,255,.16);box-shadow:0 4px 20px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900}
-  .debuffIcon .tiny{font-size:9px;color:#cbd2e8;letter-spacing:.08em}.debuffIcon .big{font-size:15px}.debuffIcon.acc{border-color:#cf9cff;background:linear-gradient(180deg,rgba(111,61,151,.94),rgba(34,23,54,.94))}
-  .debuffIcon.fade{opacity:0;transform:translateY(-5px);transition:opacity .45s,transform .45s}
-  .wipeFlash{position:absolute;inset:0;pointer-events:none;background:rgba(255,55,78,.0);transition:background .12s;z-index:6}.wipeFlash.on{background:rgba(255,55,78,.16)}
-  @media(max-width:800px){.hud{grid-template-columns:repeat(3,1fr)}.debuffStrip{top:49px}.debuffIcon{min-width:61px;height:43px}.debuffIcon .big{font-size:12px}}
-</style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#10131c" />
+<title>DMU P3 Black Hole — Waju-style Mobile Trainer</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 <div class="app">
-  <div class="top">
+  <header class="top">
     <div>
-      <div class="title">DMU P3 · Black Hole · Waju Logic Rebuild</div>
-      <div class="sub">Sequência refeita do zero usando layouts, prioridades, posições e timings da implementação pública do Waju como referência.</div>
+      <div class="title">DMU P3 · Black Hole · Waju-style Rebuild</div>
+      <div class="sub">Sequência reconstruída a partir da lógica do Waju: party completa, Black Hole sets, tethers, Slap Happy, Chaos e Body Slam.</div>
     </div>
-    <div class="toolbar bhToolbar">
+    <div class="toolbar">
       <button id="startBtn" class="primary" type="button">Começar</button>
-      <div class="selectWrap">Modo
+      <label class="selectWrap">Modo
         <select id="modeSelect"><option value="random" selected>Random</option><option value="manual">Manual</option></select>
-      </div>
-      <div class="selectWrap">Slot
-        <select id="roleSelect"><option value="t1">MT</option><option value="t2">ST</option><option value="h1" selected>H1</option><option value="h2">H2</option><option value="m1">M1</option><option value="m2">M2</option><option value="r1">R1</option><option value="r2">R2</option></select>
-      </div>
-      <div class="selectWrap" id="lineWrap">Linha
+      </label>
+      <label class="selectWrap">Slot
+        <select id="roleSelect"><option>MT</option><option>ST</option><option selected>H1</option><option>H2</option><option>M1</option><option>M2</option><option>R1</option><option>R2</option></select>
+      </label>
+      <label class="selectWrap" id="lineWrap">Linha
         <select id="lineSelect"><option value="fil">First</option><option value="sil" selected>Second</option><option value="til">Third</option></select>
-      </div>
-      <div class="selectWrap" id="accWrap">Accretion
+      </label>
+      <label class="selectWrap" id="accWrap">Accretion
         <select id="accSelect"><option value="no" selected>Não</option><option value="yes">Sim</option></select>
-      </div>
+      </label>
       <button id="hintBtn" type="button" aria-pressed="false">Hints OFF</button>
     </div>
-  </div>
-
-  <div class="hud">
+  </header>
+  <section class="hud">
     <div class="card"><div class="k">Você</div><div class="v" id="youHud">H1</div></div>
-    <div class="card"><div class="k">Linha</div><div class="v" id="lineHud">—</div></div>
-    <div class="card"><div class="k">Accretion</div><div class="v" id="accHud">?</div></div>
-    <div class="card"><div class="k">Black Hole</div><div class="v" id="blockHud">—</div></div>
+    <div class="card"><div class="k">Debuff</div><div class="v" id="debuffHud">RANDOM</div></div>
+    <div class="card"><div class="k">Mecânica</div><div class="v" id="mechHud">—</div></div>
     <div class="card"><div class="k">Wave</div><div class="v" id="waveHud">—</div></div>
+    <div class="card"><div class="k">Erros</div><div class="v" id="mistakeHud">0</div></div>
     <div class="card"><div class="k">Tempo</div><div class="v" id="timeHud">—</div></div>
-  </div>
-
-  <div class="stage" id="stage" tabindex="0">
+  </section>
+  <main class="stage" id="stage" tabindex="0">
     <canvas id="game" width="1280" height="720"></canvas>
-    <div class="banner" id="banner">Escolha o slot e toque em Começar</div>
-    <div class="lcBadge bhBadge" id="bhBadge">BH</div>
-    <div class="debuffStrip" id="debuffStrip"></div>
-    <div class="wipeFlash" id="wipeFlash"></div>
+    <div class="banner" id="banner">Escolha seu slot e toque em Começar</div>
+    <div class="debuffReveal" id="debuffReveal" hidden>
+      <div class="debuffTitle">SEUS DEBUFFS</div>
+      <div class="debuffIcons" id="debuffIcons"></div>
+      <div class="debuffText" id="debuffText"></div>
+      <div class="debuffTimer" id="debuffTimer"></div>
+    </div>
     <div class="joy" id="joy"><div class="joyLabel">MOVE</div></div>
     <div class="camJoy" id="camJoy"><div class="joyLabel">CAM</div></div>
     <button class="sprint" id="sprintBtn" type="button">SPRINT</button>
-  </div>
-
-  <div class="help">
-    <div class="legend">
-      <span><span class="dot" style="background:#66d9a6"></span>você</span>
-      <span><span class="dot" style="background:#a8b7ff"></span>bots</span>
-      <span><span class="dot" style="background:#9be8ff"></span>blackhole / tether</span>
-      <span><span class="dot" style="background:#c086ff"></span>Kefka</span>
-      <span><span class="dot" style="background:#ff765e"></span>AoE</span>
-    </div>
-    <div class="msg" id="msg">Random distribui a party inteira como o Waju. Manual força apenas o seu resultado e mantém uma distribuição válida para os outros 7 jogadores.</div>
-  </div>
-  <div class="credit">Visual original. A lógica de Black Hole usa como referência a implementação pública GPL-3.0 do Waju Sims: layouts Set13/Set24, DSA priority, BH_PRE_POS/BH_BAIT_POS e sequência P3 EQ.</div>
+  </main>
+  <section class="help">
+    <div class="legend"><span><i class="dot player"></i>você</span><span><i class="dot bot"></i>bots</span><span><i class="dot hole"></i>blackholes</span><span><i class="dot tether"></i>tether</span><span><i class="dot danger"></i>AoE</span></div>
+    <div class="msg" id="msg">Random sorteia a distribuição completa da party. Memorize seus debuffs e execute apenas suas waves.</div>
+  </section>
+  <footer class="credit">Treinador independente com arte original. A lógica/ordem da mecânica usa o projeto Waju como referência; nenhum asset oficial do FFXIV é redistribuído.</footer>
 </div>
-<script src="app.js"></script>
+<script src="rebuild1.js"></script>
+<script src="rebuild2.js"></script>
+<script src="rebuild3.js"></script>
 </body>
 </html>
